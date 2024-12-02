@@ -6,9 +6,13 @@ const user = require("../models/User");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const rateLimit = require('express-rate-limit');
+const { RateLimiterMemory } = require("rate-limiter-flexible");
 require("dotenv").config();
 
 const JWT_secret = process.env.JWT_SECRET;
+//const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '3600';
+
+let tokenBlacklist = [];
 
 // function : object which carries id of the user document.
 function idObject(newUser) {
@@ -20,20 +24,15 @@ function idObject(newUser) {
   return data;
 }
 
-// function : to generate random password for google-auth.
-function generateRandomPassword(length) {
-  const characters = process.env.PASSWORD_STRING;
 
-  let password = "";
-
-  // Generate random characters to create the password
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    password += characters[randomIndex];
+// Middleware to check token blacklist
+const checkBlacklist = (req, res, next) => {
+  const token = req.header("auth-token");
+  if (tokenBlacklist.includes(token)) {
+    return res.status(401).send("Token has been logged out");
   }
-
-  return password;
-}
+  next();
+};
 
 // Utility function to check password strength
 const isStrongPassword = (password) => {
@@ -43,20 +42,20 @@ const isStrongPassword = (password) => {
 
 // Define the rate limiting rule
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 5 * 60 * 1000, // 5 minutes
   max: 5, // Limit each IP to 5 login requests per `window` (here, per 15 minutes)
   message: "Too many login attempts from this IP, please try again after 15 minutes",
 });
 
 //ROUTE 1 : creating an new user account.
 router.post("/newuser", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password,employee_id, role } = req.body;
 
   // Basic validation using destructuring
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !employee_id, !role) {
     return res
       .status(400)
-      .json({ message: "Name, email, and password are required" });
+      .json({ message: "Name, email, password, employee_id and role are required" });
   }
 
   // Email format validation
@@ -76,12 +75,15 @@ router.post("/newuser", async (req, res) => {
   try {
     let existingUser = await user.findOne({ email });
     if (existingUser) {
+      console.log("email", email);
       return res.status(400).json({ message: "User already exists" });
     }
+    console.log("later one email", email);
   } catch (error) {
     console.error(error.message);
     return res.status(500).send("Internal server error");
   }
+
 
   // Hash the password
   try {
@@ -93,6 +95,8 @@ router.post("/newuser", async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      employee_id,
+      role
     });
 
     // Generate JWT token
@@ -106,7 +110,7 @@ router.post("/newuser", async (req, res) => {
 });
 
 // ROUTE 2 : Authenticate a user using.
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   // Basic validation
@@ -140,11 +144,23 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// need to make for logout yet.
+// Logout user
+router.post("/logout", fetchUserId, checkBlacklist, (req, res) => {
+  const token = req.header("auth-token");
+  tokenBlacklist.push(token);
+  res.send("Logged out successfully");
+});
 
 // Route 4 : to get entered user data.
-router.get("/user-data", fetchUserId, async (req, res) => {
+router.get("/user-data", fetchUserId, checkBlacklist, async (req, res) => {
+  console.log("is it working or not")
   try {
+
+    // Check if the token is blacklisted before proceeding
+    if (tokenBlacklist.includes(req.header("auth-token"))) {
+      return res.status(401).json({ msg: "Token has been logged out" });
+    }
+
     let userDocument = await user
       .findById({ _id: req.userId })
       .select("-password");
