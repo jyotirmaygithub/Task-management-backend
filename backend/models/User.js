@@ -15,6 +15,14 @@ const userDetails = new Schema({
     type: String,
     required: true,
   },
+  employee_id: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     default: Date.now,
