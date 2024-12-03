@@ -5,14 +5,12 @@ const validator = require('validator');
 const user = require("../models/User");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
-const rateLimit = require('express-rate-limit');
-const { RateLimiterMemory } = require("rate-limiter-flexible");
+const loginLimiter = require("../middleware/loginLimiter")
+//const { RateLimiterMemory } = require("rate-limiter-flexible");
+const { checkBlacklist, tokenBlacklist } = require("../middleware/tokenBlockList")
 require("dotenv").config();
 
 const JWT_secret = process.env.JWT_SECRET;
-//const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '3600';
-
-let tokenBlacklist = [];
 
 // function : object which carries id of the user document.
 function idObject(newUser) {
@@ -24,32 +22,15 @@ function idObject(newUser) {
   return data;
 }
 
-
-// Middleware to check token blacklist
-const checkBlacklist = (req, res, next) => {
-  const token = req.header("auth-token");
-  if (tokenBlacklist.includes(token)) {
-    return res.status(401).send("Token has been logged out");
-  }
-  next();
-};
-
 // Utility function to check password strength
 const isStrongPassword = (password) => {
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   return strongPasswordRegex.test(password);
 };
 
-// Define the rate limiting rule
-const loginLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 5, // Limit each IP to 5 login requests per `window` (here, per 15 minutes)
-  message: "Too many login attempts from this IP, please try again after 15 minutes",
-});
-
 //ROUTE 1 : creating an new user account.
 router.post("/newuser", async (req, res) => {
-  const { name, email, password,employee_id, role } = req.body;
+  const { name, email, password, employee_id, role } = req.body;
 
   // Basic validation using destructuring
   if (!name || !email || !password || !employee_id, !role) {
@@ -149,27 +130,6 @@ router.post("/logout", fetchUserId, checkBlacklist, (req, res) => {
   const token = req.header("auth-token");
   tokenBlacklist.push(token);
   res.send("Logged out successfully");
-});
-
-// Route 4 : to get entered user data.
-router.get("/user-data", fetchUserId, checkBlacklist, async (req, res) => {
-  console.log("is it working or not")
-  try {
-
-    // Check if the token is blacklisted before proceeding
-    if (tokenBlacklist.includes(req.header("auth-token"))) {
-      return res.status(401).json({ msg: "Token has been logged out" });
-    }
-
-    let userDocument = await user
-      .findById({ _id: req.userId })
-      .select("-password");
-    res.json({ user_data: userDocument });
-  } catch (error) {
-    // throw errors.
-    console.error(error.message);
-    res.status(500).send("Internal server Error Occured");
-  }
 });
 
 module.exports = router;
