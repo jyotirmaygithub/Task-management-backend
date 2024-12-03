@@ -16,12 +16,18 @@ const userDetails = new Schema({
     required: true,
   },
   employee_id: {
-    type: String,
+    type: Number,
     required: true,
+  },
+  manager_id: {
+    type: Number,
   },
   role: {
     type: String,
     required: true,
+  },
+  aboutSelf: {
+    type: String,
   },
   date: {
     type: Date,
