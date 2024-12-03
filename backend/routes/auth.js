@@ -30,20 +30,37 @@ const isStrongPassword = (password) => {
 
 //ROUTE 1 : creating an new user account.
 router.post("/newuser", async (req, res) => {
-  const { name, email, password, employee_id, role } = req.body;
+  const { name, email, password, employee_id, manager_id, role, aboutSelf } = req.body;
 
   // Basic validation using destructuring
-  if (!name || !email || !password || !employee_id, !role) {
+  if (!name || !email || !password || !employee_id || !role) {
     return res
       .status(400)
       .json({ message: "Name, email, password, employee_id and role are required" });
+  }
+
+  // Validate employee_id and manager_id to be numbers
+  if (isNaN(employee_id)) {
+    return res.status(400).json({ message: "Employee ID must be numbers" });
+  }
+
+  if (manager_id && isNaN(manager_id)) {
+    return res.status(400).json({ message: "Manager ID must be numbers" });
+  }
+
+  // Validate name, aboutSelf to be strings
+  if (typeof name !== 'string') {
+    return res.status(400).json({ message: "Name must be strings" });
+  }
+
+  if (aboutSelf && typeof aboutSelf !== 'string') {
+    return res.status(400).json({ message: "AboutSelf must be strings" });
   }
 
   // Email format validation
   if (!validator.isEmail(email)) {
     return res.status(400).json({ message: "Invalid email format" });
   }
-
 
   // Password strength validation
   if (!isStrongPassword(password)) {
@@ -77,7 +94,9 @@ router.post("/newuser", async (req, res) => {
       email,
       password: hashedPassword,
       employee_id,
-      role
+      manager_id,
+      role,
+      aboutSelf
     });
 
     // Generate JWT token
