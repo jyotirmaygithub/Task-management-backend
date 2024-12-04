@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const taskSchema = new Schema({
-  user: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
@@ -10,11 +10,16 @@ const taskSchema = new Schema({
     type: String,
     required: true,
   },
-  assignedUser: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "assignedUser",
+  manager_id: {
+    type: Number,
   },
-  assignedTo: {
+  assigned_to_id: {
+    type: Number,
+  },
+  assigned_to_username:{
+    type: String,
+  },
+  status: {
     type: String,
   },
   title: {
@@ -28,6 +33,9 @@ const taskSchema = new Schema({
   tag: {
     type: String,
     default: "General",
+  },
+  dueDate:{
+    type: Date,
   },
   date: {
     type: Date,
