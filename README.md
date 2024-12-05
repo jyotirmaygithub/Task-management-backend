@@ -1,73 +1,116 @@
 # Task Management System
 
-This project is a full-stack task management system developed using React, Express, Node.js, and MongoDB Atlas. The frontend is deployed on Netlify and built with Material UI and Tailwind CSS. It features user authentication with Google OAuth and JWT token authorization. Users can create tasks, view all tasks created by all users, and assign themselves to tasks. Additionally, there are routes for viewing archived tasks, tasks created by the user, and tasks assigned to the user.
+## Introduction
+
+This RESTful API, built with Node.js, offers a robust task management solution featuring user authentication, role-based access control, and task management capabilities.
+
+## Tech Stack
+
+- **Backend**: Node.js, Express.js, MongoDB
+
+### Dependencies
+
+- **bcrypt**: ^5.1.1
+- **cors**: ^2.8.5
+- **dotenv**: ^16.4.5
+- **express**: ^4.19.2
+- **express-validator**: ^7.0.1
+- **jsonwebtoken**: ^9.0.2
+- **mongoose**: ^8.3.2
 
 ## Features
 
-- User authentication with Google OAuth
-- JWT token authorization
-- Create tasks
-- View all tasks created by all users
-- Assign oneself to tasks
-- Routes for viewing archived tasks, tasks created by the user, and tasks assigned to the user
+### Admin
 
-## Technologies Used
+The admin in this API provides essential functionalities to manage tasks and users effectively. They allow the admin to:
 
-- React
-- Express
-- Node.js
-- MongoDB Atlas
-- Material UI
-- Tailwind CSS
-- Google OAuth
+- **Retrieve all tasks and users**: Access comprehensive data about all tasks and users on the platform.
+- **Assign managers to employees**: Designate specific managers to oversee employees, ensuring proper supervision and task allocation.
+- **Assign tasks to employees**: Allocate tasks directly to employees, facilitating efficient workflow management.
+- **Update existing tasks**: Modify task details such as title, description, status, tag, and due date to ensure they are up-to-date and accurately reflect the current requirements.
 
-## Deployment
-Frontend: Deployed on Netlify
-Backend: Deploy your Node.js server to a hosting provider of your choice (e.g., Heroku, AWS, DigitalOcean)
+### Manager
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+The manager in this API allows managers to efficiently manage their employees and tasks. They provide functionalities to:
 
-## License
-Ensure you replace https://github.com/jyotirmaygithub/Task-Management-System with the actual URL of your project repository and fill in the appropriate values for the environment variables.
+- **Retrieve tasks and employees under a manager**: Access comprehensive data about all tasks and employees under a manager's supervision.
+- **Update or change an employee's role**: Modify an employee's role to ensure they have the appropriate permissions and responsibilities.
+- **Update tasks**: Modify task details such as title, description, status, tag, and due date.
+- **Assign tasks to employees**: Allocate tasks directly to employees under the manager's supervision.
 
-## Getting Started
+### Employee
 
-1. Clone the repository:
+The employee in this API allows employees to manage their profiles and tasks effectively. They provide functionalities to:
 
-```bash
-git clone https://github.com/jyotirmaygithub/Task-Management-System
+- **Retrieve their profile and assigned tasks**: Access personal data and tasks that are assigned to them.
+- **Update the status of assigned tasks**: Modify the status of tasks they are responsible for.
+- **Update their profile with restricted fields**: Edit their personal information like name and about section.
 
-2. Install dependencies for both frontend and backend:
+### Analytics
 
-cd frontend
-npm install
+- **Task Statistics**: View statistics for tasks assigned to an employee or manager, including the number of completed, pending, and overdue tasks.
+- **Task Filtering**: Fetch lists of tasks based on their status (completed, pending, overdue) for employees and managers.
+- **Role-based Access Control**: Different endpoints are available for employees and managers, with appropriate authorization checks.
+- **Blacklist Check**: The API ensures that tokens are not blacklisted, providing additional security.
+- **Task Due Date Management**: For employees, overdue tasks are filtered based on the current date.
 
-cd ../backend
-npm install
+### Searching
 
-3.Set up environment variables:
+Search for tasks based on different criteria such as title, description, status, tag, and assigned username.
 
-For frontend (React):
-Create a .env file in the frontend directory.
-Add the following variables to the .env file
+## Environment Variables
 
-REACT_APP_AUTH_CLIENT_ID=your_google_auth_client_id
-REACT_APP_DEV_URL=your_frontend_dev_url
+Create a `.env` file in the root of your project and define the following environment variables:
 
-For backend (Node.js):
-Create a .env file in the backend directory.
-Add the following variables to the .env file
+### backend/.env
+- **JWT_SECRET**: "your_jwt_secret"
+- **MYEMAIL**: "your_email"
 
-JWT_SECRET=your_preferable_jwt_secret
-REACT_APP_MONGO_URL=your_mongodb_url_of_local_database
-PASSWORD_STRING=random_string
+## API Endpoints
 
-4.Start the backend server:
-cd backend
-npm start
+Here's an outline of the routes typically used in the Task Management System:
 
-5.Start the frontend development server:
-cd frontend
-npm start
+### Authentication
 
+- **POST /api/auth/newuser**: Register a new user.
+- **POST /api/auth/login**: Login user and generate JWT token.
+- **POST /api/auth/logout**: Log out the user.
+
+### Admin Management
+
+- **GET /api/admin/admin**: Fetch all tasks and users on the platform (Admin only).
+- **PUT /api/admin/adminAssignManager**: Assign a manager to an employee (Admin only).
+- **PUT /api/admin/AdminAssignTask/:taskId**: Assign a task to an employee (Admin only).
+- **PUT /api/admin/adminUpdateTask/:id**: Update an existing task (Admin only).
+
+### Manager Management
+
+- **GET api/manager/manager**: Fetch a list of employees and tasks assigned to them.
+- **PUT api/manager/updateEmployee/:employeeId**: Update the role of an employee.
+- **PUT api/manager/managerUpdateTask/:id**: Update a task assigned to an employee.
+- **PUT api/manager/assignTask/:taskId**: Assign a task to an employee.
+
+### Employee Management
+
+- **GET api/employee/employee**: Fetch the profile details of the employee along with the tasks assigned to them.
+- **PUT api/employee/employeeUpdate**: Update the employee's personal details such as name and about section.
+
+### Analytics
+
+- **GET /employee**: Fetches task statistics (completed, pending, and overdue tasks) for the logged-in employee.
+- **GET /manager**: Fetches task statistics (completed, pending, and overdue tasks) for the logged-in manager.
+- **GET /employee/completed-tasks**: Fetches all completed tasks assigned to the logged-in employee.
+- **GET /employee/pending-tasks**: Fetches all pending tasks assigned to the logged-in employee.
+- **GET /employee/overdue-tasks**: Fetches all overdue tasks assigned to the logged-in employee.
+- **GET /manager/completed-tasks**: Fetches all completed tasks for the manager's team.
+- **GET /manager/pending-tasks**: Fetches all pending tasks for the manager's team.
+- **GET /manager/overdue-tasks**: Fetches all overdue tasks for the manager's team.
+
+## Installation
+
+Follow these steps to set up and run the application locally:
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/jyotirmaygithub/Task-management-backend
+   cd backend
