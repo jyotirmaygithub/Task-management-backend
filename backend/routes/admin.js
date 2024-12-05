@@ -6,11 +6,10 @@ const Task = require("../models/Task");
 const { checkBlacklist } = require("../middleware/tokenBlockList");
 require("dotenv").config();
 
-
+// admin route to get all tasks and users on the platform.
 router.get("/admin", checkBlacklist, fetchUserId, async (req, res) => {
 
     try {
-
         let adminDocument = await User
             .findById({ _id: req.userId })
             .select("-password");
@@ -19,10 +18,6 @@ router.get("/admin", checkBlacklist, fetchUserId, async (req, res) => {
             console.error(`Admin with ID not found`);
             return res.status(404).json({ msg: "Admin not found" });
         }
-
-        console.log("user document = ", adminDocument);
-
-        // Check if the user's email matches the admin email
         if (adminDocument.email !== process.env.MYEMAIL) {
             console.error(`Unauthorized access: User email ${adminDocument.email} does not match admin email`);
             return res.status(401).json({ msg: "You are not authorized to proceed further" });
@@ -38,7 +33,7 @@ router.get("/admin", checkBlacklist, fetchUserId, async (req, res) => {
     }
 });
 
-
+// admin route to assign manager to the employee. 
 router.put("/adminAssignManager", checkBlacklist, fetchUserId, async (req, res) => {
 
     try {
@@ -52,9 +47,6 @@ router.put("/adminAssignManager", checkBlacklist, fetchUserId, async (req, res) 
             console.error(`Admin with ID not found`);
             return res.status(404).json({ msg: "Admin not found" });
         }
-
-
-        // Check if the user's email matches the admin email
         if (adminDocument.email !== process.env.MYEMAIL) {
             console.error(`Unauthorized access: User email ${adminDocument.email} does not match admin email`);
             return res.status(401).json({ msg: "You are not authorized to proceed further" });
@@ -75,14 +67,10 @@ router.put("/adminAssignManager", checkBlacklist, fetchUserId, async (req, res) 
         if (!managerDocument) {
             return res.status(404).json({ msg: "manager not found" });
         }
-
         if (managerDocument.role !== "manager") {
             return res.status(404).json({ msg: "you are not authorized to become manager of an employee" });
         }
-        console.log("to check = ", employeeDocument.manager_id);
-        console.log("to check = ", managerDocument.employee_id);
 
-        // Update the employee's manager
         employeeDocument.manager_id = managerDocument.employee_id;
         await employeeDocument.save();
 
@@ -93,7 +81,7 @@ router.put("/adminAssignManager", checkBlacklist, fetchUserId, async (req, res) 
     }
 });
 
-
+// admin route to assign tasks to the employees.
 router.put("/AdminAssignTask/:taskId", checkBlacklist, fetchUserId, async (req, res) => {
     try {
         const { taskId } = req.params
@@ -103,20 +91,16 @@ router.put("/AdminAssignTask/:taskId", checkBlacklist, fetchUserId, async (req, 
         if (!adminDocument) {
             return res.status(404).send("Admin not found");
         }
-
-        // Check if the user's email matches the admin email
         if (adminDocument.email !== process.env.MYEMAIL) {
             console.error(`Unauthorized access: User email ${adminDocument.email} does not match admin email`);
             return res.status(401).json({ msg: "You are not authorized to proceed further" });
         }
 
-        // Find the employee by employeeId
         const employee = await User.findOne({ employee_id: employeeId }).select("-password");
 
         if (!employee) {
             return res.status(404).send("Employee not found");
         }
-        // Update the task with assigned user and username
         const updatedTask = await Task.findByIdAndUpdate(
             taskId,
             { manager_id: adminDocument.employee_id, assigned_to_id: employeeId, assigned_to_username: employee.name },
@@ -126,7 +110,6 @@ router.put("/AdminAssignTask/:taskId", checkBlacklist, fetchUserId, async (req, 
         if (!updatedTask) {
             return res.status(404).send("Task not found");
         }
-        // Respond with the updated task
         res.json(updatedTask);
     } catch (error) {
         console.error(error.message);
@@ -134,9 +117,10 @@ router.put("/AdminAssignTask/:taskId", checkBlacklist, fetchUserId, async (req, 
     }
 });
 
+// admin route to update the existing tasks.
 router.put("/adminUpdateTask/:id", checkBlacklist, fetchUserId, async (req, res) => {
     try {
-        const { title, description, tag, status, due_date } = req.body;
+        const { title, description, tag, status, dueDate } = req.body;
         const newTask = {};
 
         let adminDocument = await User
@@ -147,8 +131,6 @@ router.put("/adminUpdateTask/:id", checkBlacklist, fetchUserId, async (req, res)
             console.error(`User with ID not found`);
             return res.status(404).json({ msg: "Admin not found" });
         }
-
-        // Check if the user's email matches the admin email
         if (adminDocument.email !== process.env.MYEMAIL) {
             console.error(`Unauthorized access: User email ${adminDocument.email} does not match admin email`);
             return res.status(401).json({ msg: "You are not authorized to proceed further" });
@@ -159,11 +141,9 @@ router.put("/adminUpdateTask/:id", checkBlacklist, fetchUserId, async (req, res)
         if (!foundTask) {
             return res.status(404).send("The Task is not available");
         }
-
         if (!foundTask.manager_id) {
             return res.status(404).send(" Not authorized to update this task");
         }
-
         if (status) {
             newTask.status = status;
         }
@@ -176,11 +156,9 @@ router.put("/adminUpdateTask/:id", checkBlacklist, fetchUserId, async (req, res)
         if (tag) {
             newTask.tag = tag;
         }
-
-        if (due_date) {
-            newTask.dueDate = due_date;
+        if (dueDate) {
+            newTask.dueDate = dueDate;
         }
-
 
         const updatedTask = await Task.findByIdAndUpdate(
             req.params.id,

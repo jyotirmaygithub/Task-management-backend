@@ -6,11 +6,10 @@ const Task = require("../models/Task");
 const { checkBlacklist } = require("../middleware/tokenBlockList");
 require("dotenv").config();
 
-
+// to get their profile and assigned tasks.
 router.get("/employee", checkBlacklist, fetchUserId, async (req, res) => {
-    console.log("is it working or not")
-    try {
 
+    try {
         let employeeDocument = await User
             .findById({ _id: req.userId })
             .select("-password");
@@ -22,13 +21,12 @@ router.get("/employee", checkBlacklist, fetchUserId, async (req, res) => {
         let taskDocument = await Task.find({ assigned_to_id: employeeDocument.employee_id })
         res.json({ user_data: employeeDocument, userTasks: taskDocument });
     } catch (error) {
-        // throw errors.
         console.error(error.message);
         res.status(500).send("Internal server Error Occured");
     }
 });
 
-
+// to update status of the task by the assigned employee.
 router.put("/employeeUpdateTask/:id", checkBlacklist, fetchUserId, async (req, res) => {
     try {
         const { status } = req.body;
@@ -47,16 +45,12 @@ router.put("/employeeUpdateTask/:id", checkBlacklist, fetchUserId, async (req, r
         if (!foundTask) {
             return res.status(404).send("The Task is not available");
         }
-        console.log(foundTask.assigned_to_id)
         if (foundTask.assigned_to_id !== employeeDocument.employee_id) {
             return res.status(403).send("You are not authorized to update this task");
         }
-
-        console.log("status =",status)
         if (status !== "completed" && status !== "ongoing") {
             return res.status(400).send("Invalid status");
         }
-
         if (status) {
             newTask.status = status;
         }
@@ -73,9 +67,8 @@ router.put("/employeeUpdateTask/:id", checkBlacklist, fetchUserId, async (req, r
         res.status(500).send("Internal server error");
     }
 });
-// route to update itself.
 
-
+// employee to update itself with restricted fields.
 router.put("/employeeUpdate", checkBlacklist, fetchUserId, async (req, res) => {
     try {
         const { name, aboutself } = req.body;
