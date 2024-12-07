@@ -5,7 +5,7 @@ const validator = require('validator');
 const user = require("../models/User");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
-const loginLimiter = require("../middleware/loginLimiter")
+const {authLimiter} = require("../middleware/loginLimiter")
 const { checkBlacklist, tokenBlacklist } = require("../middleware/tokenBlockList")
 require("dotenv").config();
 
@@ -28,7 +28,7 @@ const isStrongPassword = (password) => {
 };
 
 //creating an new user account.
-router.post("/newuser", loginLimiter, async (req, res) => {
+router.post("/newuser", authLimiter, async (req, res) => {
   const { name, email, password, employee_id, manager_id, role, aboutSelf } = req.body;
 
   // Basic validation using destructuring
@@ -112,7 +112,7 @@ router.post("/newuser", loginLimiter, async (req, res) => {
 });
 
 // user login.
-router.post("/login", loginLimiter, async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {

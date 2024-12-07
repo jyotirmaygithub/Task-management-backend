@@ -4,10 +4,11 @@ const fetchUserId = require("../middleware/fetchUserId");
 const User = require("../models/User");
 const Task = require("../models/Task");
 const { checkBlacklist } = require("../middleware/tokenBlockList");
+const { employeeLimiter } = require("../middleware/loginLimiter")
 require("dotenv").config();
 
 // to get their profile and assigned tasks.
-router.get("/employee", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/employee", employeeLimiter, checkBlacklist, fetchUserId, async (req, res) => {
 
     try {
         let employeeDocument = await User
@@ -27,7 +28,7 @@ router.get("/employee", checkBlacklist, fetchUserId, async (req, res) => {
 });
 
 // to update status of the task by the assigned employee.
-router.put("/employeeUpdateTask/:id", checkBlacklist, fetchUserId, async (req, res) => {
+router.put("/employeeUpdateTask/:id", employeeLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         const { status } = req.body;
         const newTask = {};
@@ -69,7 +70,7 @@ router.put("/employeeUpdateTask/:id", checkBlacklist, fetchUserId, async (req, r
 });
 
 // employee to update itself with restricted fields.
-router.put("/employeeUpdate", checkBlacklist, fetchUserId, async (req, res) => {
+router.put("/employeeUpdate", employeeLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         const { name, aboutself } = req.body;
         const userDetails = {};

@@ -3,10 +3,11 @@ const router = express.Router();
 const Task = require("../models/Task");
 const User = require("../models/User");
 const { checkBlacklist } = require("../middleware/tokenBlockList");
+const { analyticsLimiter } = require("../middleware/loginLimiter");
 const fetchUserId = require("../middleware/fetchUserId");
 
 //  Get task statistics by employee.
-router.get("/employee", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/employee",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
 
         let employeeDocument = await User
@@ -38,7 +39,7 @@ router.get("/employee", checkBlacklist, fetchUserId, async (req, res) => {
 });
 
 // Get task statistics by manager
-router.get("/manager", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/manager",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
 
         let managerDocument = await User
@@ -70,7 +71,7 @@ router.get("/manager", checkBlacklist, fetchUserId, async (req, res) => {
 });
 
 // Get completed tasks for employee.
-router.get("/employee/completed-tasks", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/employee/completed-tasks",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         let employeeDocument = await User
             .findById({ _id: req.userId })
@@ -93,7 +94,7 @@ router.get("/employee/completed-tasks", checkBlacklist, fetchUserId, async (req,
 });
 
 // Get pending tasks for employee.
-router.get("/employee/pending-tasks", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/employee/pending-tasks",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         let employeeDocument = await User
             .findById({ _id: req.userId })
@@ -116,7 +117,7 @@ router.get("/employee/pending-tasks", checkBlacklist, fetchUserId, async (req, r
 });
 
 // Get overdue tasks for employee.
-router.get("/employee/overdue-tasks", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/employee/overdue-tasks",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         let employeeDocument = await User
             .findById({ _id: req.userId })
@@ -141,7 +142,7 @@ router.get("/employee/overdue-tasks", checkBlacklist, fetchUserId, async (req, r
 });
 
 // Get completed tasks for manager.
-router.get("/manager/completed-tasks", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/manager/completed-tasks",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         let managerDocument = await User
             .findById({ _id: req.userId })
@@ -169,7 +170,7 @@ router.get("/manager/completed-tasks", checkBlacklist, fetchUserId, async (req, 
 });
 
 // Get pending tasks for manager.
-router.get("/manager/pending-tasks", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/manager/pending-tasks",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         let managerDocument = await User
             .findById({ _id: req.userId })
@@ -197,7 +198,7 @@ router.get("/manager/pending-tasks", checkBlacklist, fetchUserId, async (req, re
 });
 
 // Get overdue tasks for manager.
-router.get("/manager/overdue-tasks", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/manager/overdue-tasks",analyticsLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         let managerDocument = await User
             .findById({ _id: req.userId })

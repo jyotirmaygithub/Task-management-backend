@@ -4,10 +4,11 @@ const fetchUserId = require("../middleware/fetchUserId");
 const User = require("../models/User");
 const Task = require("../models/Task");
 const { checkBlacklist } = require("../middleware/tokenBlockList");
+const { managerLimiter } = require("../middleware/loginLimiter");
 require("dotenv").config();
 
 // route to get tasks and employee specfic to the manager.
-router.get("/manager", checkBlacklist, fetchUserId, async (req, res) => {
+router.get("/manager", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {
 
     try {
         let managerDocument = await User
@@ -33,7 +34,7 @@ router.get("/manager", checkBlacklist, fetchUserId, async (req, res) => {
 });
 
 // manager to update or change employee role.
-router.put("/updateEmployee/:employeeId", checkBlacklist, fetchUserId, async (req, res) => {
+router.put("/updateEmployee/:employeeId", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     const { employeeId } = req.params;
     const { employeeRole } = req.body;
 
@@ -73,7 +74,7 @@ router.put("/updateEmployee/:employeeId", checkBlacklist, fetchUserId, async (re
 });
 
 // manager to update the task.
-router.put("/managerUpdateTask/:id", checkBlacklist, fetchUserId, async (req, res) => {
+router.put("/managerUpdateTask/:id", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         const { title, description, tag, status, dueDate } = req.body;
         const newTask = {};
@@ -131,7 +132,7 @@ router.put("/managerUpdateTask/:id", checkBlacklist, fetchUserId, async (req, re
 });
 
 // manager to assign task to the employee.
-router.put("/assignTask/:taskId", checkBlacklist, fetchUserId, async (req, res) => {
+router.put("/assignTask/:taskId", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
         const { taskId } = req.params;
         const { employeeId } = req.body;
