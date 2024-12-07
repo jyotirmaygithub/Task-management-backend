@@ -17,6 +17,7 @@ This RESTful API, built with Node.js, offers a robust task management solution f
 - **express-validator**: ^7.0.1
 - **jsonwebtoken**: ^9.0.2
 - **mongoose**: ^8.3.2
+- **express-rate-limit**: ^7.0.0
 
 ## Features
 
@@ -65,6 +66,7 @@ Create a `.env` file in the root of your project and define the following enviro
 ### backend/.env
 - **JWT_SECRET**: "your_jwt_secret"
 - **MYEMAIL**: "your_email"
+- **APP_MONGO_URL**: "enter your mongodb url"
 
 ## API Endpoints
 
@@ -106,6 +108,14 @@ Here's an outline of the routes typically used in the Task Management System:
 - **GET /manager/pending-tasks**: Fetches all pending tasks for the manager's team.
 - **GET /manager/overdue-tasks**: Fetches all overdue tasks for the manager's team.
 
+### Searching
+
+-- **POST /searching/search-tasks**: Fetches data by searching.
+
+## Render deployed link:
+ ```bash
+  https://task-management-backend-m4qj.onrender.com
+```
 ## Installation
 
 Follow these steps to set up and run the application locally:
@@ -114,3 +124,7 @@ Follow these steps to set up and run the application locally:
    ```bash
    git clone https://github.com/jyotirmaygithub/Task-management-backend
    cd backend
+   npm install
+   nodemon else node index.js
+   
+   
