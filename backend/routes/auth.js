@@ -27,7 +27,65 @@ const isStrongPassword = (password) => {
   return strongPasswordRegex.test(password);
 };
 
-//creating an new user account.
+/**
+ * @swagger
+ * /api/auth/newuser:
+ *   post:
+ *     description: Create a new user account.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - BearerAuth: []  # Specify the security requirement (authentication)
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - employee_id
+ *               - role
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 example: johndoe@example.com
+ *               password:
+ *                 type: string
+ *                 example: Password123!
+ *               employee_id:
+ *                 type: integer
+ *                 example: 12345
+ *               manager_id:
+ *                 type: integer
+ *                 example: 54321
+ *               role:
+ *                 type: string
+ *                 example: "employee"
+ *               aboutSelf:
+ *                 type: string
+ *                 example: "I am a software developer."
+ *     responses:
+ *       200:
+ *         description: Successfully created a new user and returned the authentication token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 auth_token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ..."
+ *       400:
+ *         description: Bad request (e.g. missing required fields or invalid data).
+ *       500:
+ *         description: Internal server error.
+ */
 router.post("/newuser", authLimiter, async (req, res) => {
   const { name, email, password, employee_id, manager_id, role, aboutSelf } = req.body;
 
@@ -111,7 +169,47 @@ router.post("/newuser", authLimiter, async (req, res) => {
   }
 });
 
-// user login.
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     description: User login to obtain an authentication token.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: johndoe@example.com
+ *               password:
+ *                 type: string
+ *                 example: Password123!
+ *     responses:
+ *       200:
+ *         description: Successfully logged in and returned the authentication token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 auth_token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ..."
+ *       400:
+ *         description: Missing required fields (email, password).
+ *       401:
+ *         description: Invalid credentials.
+ *       500:
+ *         description: Server error.
+ */
 router.post("/login", authLimiter, async (req, res) => {
   const { email, password } = req.body;
 
@@ -142,7 +240,23 @@ router.post("/login", authLimiter, async (req, res) => {
   }
 });
 
-// Logout user.
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     description: Log out the user by invalidating their session token.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - BearerAuth: []  # This route requires authentication (Bearer token).
+ *     responses:
+ *       200:
+ *         description: Successfully logged out.
+ *       401:
+ *         description: Unauthorized (missing or invalid token).
+ *       500:
+ *         description: Server error.
+ */
 router.post("/logout", fetchUserId, checkBlacklist, (req, res) => {
   const token = req.header("auth-token");
   tokenBlacklist.push(token);

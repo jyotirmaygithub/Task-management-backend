@@ -7,6 +7,91 @@ const { checkBlacklist } = require("../middleware/tokenBlockList");
 const { managerLimiter } = require("../middleware/loginLimiter");
 require("dotenv").config();
 
+
+/**
+ * @swagger
+ * tags:
+ *   name: Manager
+ *   description: Manager related operations
+ */
+
+/**
+ * @swagger
+ * /manager:
+ *   get:
+ *     summary: Get tasks and employees specific to the manager.
+ *     tags: [Manager]
+ *     responses:
+ *       200:
+ *         description: A list of employees and tasks under the manager.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 employeesUnderManager:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "605c72ef153207001f14a203"
+ *                       email:
+ *                         type: string
+ *                         example: "employee@company.com"
+ *                       name:
+ *                         type: string
+ *                         example: "Jane Smith"
+ *                       role:
+ *                         type: string
+ *                         example: "employee"
+ *                       employee_id:
+ *                         type: number
+ *                         example: 54321
+ *                       manager_id:
+ *                         type: number
+ *                         example: 10001
+ *                 tasksUnderManager:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "60e6a5b5d9c1f80011256e7c"
+ *                       title:
+ *                         type: string
+ *                         example: "Updated Task Title"
+ *                       description:
+ *                         type: string
+ *                         example: "Updated task description"
+ *                       tag:
+ *                         type: string
+ *                         example: "Report"
+ *                       status:
+ *                         type: string
+ *                         example: "Completed"
+ *                       dueDate:
+ *                         type: string
+ *                         example: "2024-12-20T23:59:59Z"
+ *                       manager_id:
+ *                         type: number
+ *                         example: 10001
+ *                       assigned_to_id:
+ *                         type: number
+ *                         example: 54321
+ *                       assigned_to_username:
+ *                         type: string
+ *                         example: "Jane Smith"
+ *       401:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Manager not found
+ *       500:
+ *         description: Internal server error
+ */
+
 // route to get tasks and employee specfic to the manager.
 router.get("/manager", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {
 
@@ -32,6 +117,65 @@ router.get("/manager", managerLimiter, checkBlacklist, fetchUserId, async (req, 
         res.status(500).send("Internal server error");
     }
 });
+
+
+
+/**
+ * @swagger
+ * /updateEmployee/{employeeId}:
+ *   put:
+ *     summary: Manager to update or change employee role.
+ *     tags: [Manager]
+ *     parameters:
+ *       - name: employeeId
+ *         in: path
+ *         required: true
+ *         description: ID of the employee to be updated
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 example: "intern"
+ *     responses:
+ *       200:
+ *         description: Employee updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "605c72ef155t401f14a203"
+ *                 name:
+ *                   type: string
+ *                   example: "Henry Smith"
+ *                 email:
+ *                   type: string
+ *                   example: "henry@company.com"
+ *                 role:
+ *                   type: string
+ *                   example: "intern"
+ *                 employee_id:
+ *                   type: number
+ *                   example: 1789
+ *                 manager_id:
+ *                   type: number
+ *                   example: 10001
+ *       403:
+ *         description: Unauthorized update attempt
+ *       404:
+ *         description: Employee or manager not found
+ *       500:
+ *         description: Internal server error
+ */
 
 // manager to update or change employee role.
 router.put("/updateEmployee/:employeeId", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {
@@ -72,6 +216,82 @@ router.put("/updateEmployee/:employeeId", managerLimiter, checkBlacklist, fetchU
         res.status(500).send("Internal server error");
     }
 });
+
+
+/**
+ * @swagger
+ * /managerUpdateTask/{id}:
+ *   put:
+ *     summary: Manager to update the task.
+ *     tags: [Manager]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the task to be updated
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Complete Project A"
+ *               description:
+ *                 type: string
+ *                 example: "Complete the final review and submission of Project A."
+ *               status:
+ *                 type: string
+ *                 example: "in-progress"
+ *               dueDate:
+ *                 type: string
+ *                 example: "2024-12-31"
+ *     responses:
+ *       200:
+ *         description: Task updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60e6a5b5d9c1f80011256e7c"
+ *                 title:
+ *                   type: string
+ *                   example: "Complete Project A"
+ *                 description:
+ *                   type: string
+ *                   example: "Complete the final review and submission of Project A."
+ *                 tag:
+ *                   type: string
+ *                   example: "Report"
+ *                 status:
+ *                   type: string
+ *                   example: "in-progress"
+ *                 dueDate:
+ *                   type: string
+ *                   example: "2024-12-31T23:59:59Z"
+ *                 manager_id:
+ *                   type: number
+ *                   example: 10001
+ *                 assigned_to_id:
+ *                   type: number
+ *                   example: 54321
+ *                 assigned_to_username:
+ *                   type: string
+ *                   example: "Jane Smith"
+ *       403:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Internal server error
+ */
 
 // manager to update the task.
 router.put("/managerUpdateTask/:id", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {
@@ -130,6 +350,67 @@ router.put("/managerUpdateTask/:id", managerLimiter, checkBlacklist, fetchUserId
         res.status(500).send("Internal server error");
     }
 });
+
+
+/**
+ * @swagger
+ * /assignTask/{taskId}:
+ *   put:
+ *     summary: Manager to assign task to an employee.
+ *     tags: [Manager]
+ *     parameters:
+ *       - name: taskId
+ *         in: path
+ *         required: true
+ *         description: ID of the task to be assigned
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               employee_id:
+ *                 type: number
+ *                 example: 1789
+ *     responses:
+ *       200:
+ *         description: Task assigned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60e6a5by564tr80011256e7c"
+ *                 title:
+ *                   type: string
+ *                   example: "Excel sheet need to complete"
+ *                 description:
+ *                   type: string
+ *                   example: "collaberate with the manager to complete it."
+ *                 tag:
+ *                   type: string
+ *                   example: "Excel"
+ *                 manager_id:
+ *                   type: number
+ *                   example: 10001
+ *                 assigned_to_id:
+ *                   type: number
+ *                   example: 1789
+ *                 assigned_to_username:
+ *                   type: string
+ *                   example: "henry Smith"
+ *       403:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Task, manager, or employee not found
+ *       500:
+ *         description: Internal server error
+ */
 
 // manager to assign task to the employee.
 router.put("/assignTask/:taskId", managerLimiter, checkBlacklist, fetchUserId, async (req, res) => {

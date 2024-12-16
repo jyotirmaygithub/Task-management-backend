@@ -7,6 +7,82 @@ const { checkBlacklist } = require("../middleware/tokenBlockList");
 const { employeeLimiter } = require("../middleware/loginLimiter")
 require("dotenv").config();
 
+
+/**
+ * @swagger
+ * tags:
+ *   name: Employee
+ *   description: Employee related operations
+ */
+
+
+/**
+ * @swagger
+ * /employee:
+ *   get:
+ *     summary: Get employee profile and their assigned tasks.
+ *     tags: [Employee]
+ *     responses:
+ *       200:
+ *         description: Employee profile and assigned tasks retrieved successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user_data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "605c72ef155t401f14a203"
+ *                     email:
+ *                       type: string
+ *                       example: "henry@company.com"
+ *                     name:
+ *                       type: string
+ *                       example: "henry Smith"
+ *                     role:
+ *                       type: string
+ *                       example: "intern"
+ *                     employee_id:
+ *                       type: number
+ *                       example: 1789
+ *                     manager_id:
+ *                       type: number
+ *                       example: 10001
+ *                 userTasks:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "60e6a5by564tr80011256e7c"
+ *                       title:
+ *                         type: string
+ *                         example: "Excel sheet need to complete"
+ *                       description:
+ *                         type: string
+ *                         example: "collaberate with the manager to complete it."
+ *                       tag:
+ *                         type: string
+ *                         example: "Excel"  
+ *                       manager_id:
+ *                         type: number
+ *                         example: 10001
+ *                       assigned_to_id:
+ *                         type: number
+ *                         example: 1789
+ *                       assigned_to_username:
+ *                         type: string
+ *                         example: "henry Smith"
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Internal server error
+ */
+
 // to get their profile and assigned tasks.
 router.get("/employee", employeeLimiter, checkBlacklist, fetchUserId, async (req, res) => {
 
@@ -27,6 +103,72 @@ router.get("/employee", employeeLimiter, checkBlacklist, fetchUserId, async (req
     }
 });
 
+
+
+/**
+ * @swagger
+ * /employeeUpdateTask/{id}:
+ *   put:
+ *     summary: Update the status of a task by the assigned employee.
+ *     tags: [Employee]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the task to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "completed"
+ *     responses:
+ *       200:
+ *         description: Task status updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60e6a5by564tr80011256e7c"
+ *                 title:
+ *                   type: string
+ *                   example: "Excel sheet need to complete"
+ *                 description:
+ *                   type: string
+ *                   example: "collaborate with the manager to complete it."
+ *                 tag:
+ *                   type: string
+ *                   example: "Excel"
+ *                 status:
+ *                   type: string
+ *                   example: "completed"
+ *                 manager_id:
+ *                   type: number
+ *                   example: 10001
+ *                 assigned_to_id:
+ *                   type: number
+ *                   example: 1789
+ *                 assigned_to_username:
+ *                   type: string
+ *                   example: "henry Smith"
+ *       400:
+ *         description: Invalid status
+ *       403:
+ *         description: Unauthorized to update this task
+ *       404:
+ *         description: Task or employee not found
+ *       500:
+ *         description: Internal server error
+ */
 // to update status of the task by the assigned employee.
 router.put("/employeeUpdateTask/:id", employeeLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
@@ -68,6 +210,60 @@ router.put("/employeeUpdateTask/:id", employeeLimiter, checkBlacklist, fetchUser
         res.status(500).send("Internal server error");
     }
 });
+
+/**
+ * @swagger
+ * /employeeUpdate:
+ *   put:
+ *     summary: Update employee profile with restricted fields.
+ *     tags: [Employee]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Henry Gupta"
+ *               aboutself:
+ *                 type: string
+ *                 example: "I am a dedicated employee with a passion for data analysis."
+ *     responses:
+ *       200:
+ *         description: Employee profile updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "605c72ef155t401f14a203"
+ *                 email:
+ *                   type: string
+ *                   example: "henry@company.com"
+ *                 name:
+ *                   type: string
+ *                   example: "Henry Gupta"
+ *                 role:
+ *                   type: string
+ *                   example: "intern"
+ *                 employee_id:
+ *                   type: number
+ *                   example: 1789
+ *                 manager_id:
+ *                   type: number
+ *                   example: 10001
+ *                 aboutSelf:
+ *                   type: string
+ *                   example: "I am a dedicated employee with a passion for data analysis."
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Internal server error
+ */
 
 // employee to update itself with restricted fields.
 router.put("/employeeUpdate", employeeLimiter, checkBlacklist, fetchUserId, async (req, res) => {

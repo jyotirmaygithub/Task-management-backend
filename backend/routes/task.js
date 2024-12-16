@@ -5,6 +5,68 @@ const Task = require("../models/Task");
 const User = require("../models/User");
 const { checkBlacklist } = require("../middleware/tokenBlockList");
 
+
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Get tasks based on filters (status, sortBy, order).
+ *     tags: [Task]
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         description: The status of the tasks to filter by.
+ *         schema:
+ *           type: string
+ *           enum: [completed, ongoing, overdue]
+ *       - in: query
+ *         name: sortBy
+ *         required: false
+ *         description: The field to sort the tasks by.
+ *         schema:
+ *           type: string
+ *           example: title
+ *       - in: query
+ *         name: order
+ *         required: false
+ *         description: The sort order for the results.
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *     responses:
+ *       200:
+ *         description: A list of tasks matching the filter and sort criteria.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "60e6a5by564tr80011256e7c"
+ *                   title:
+ *                     type: string
+ *                     example: "Complete Project A"
+ *                   description:
+ *                     type: string
+ *                     example: "Complete the final review and submission of Project A."
+ *                   status:
+ *                     type: string
+ *                     example: "in-progress"
+ *                   dueDate:
+ *                     type: string
+ *                     example: "2024-12-31T23:59:59Z"
+ *                   assigned_to_username:
+ *                     type: string
+ *                     example: "Jane Smith"
+ *       400:
+ *         description: Invalid query parameters.
+ *       500:
+ *         description: Internal server error.
+ */
 // get the tasks by using the filters and sorting.
 router.get("/tasks", checkBlacklist, fetchUserId, async (req, res) => {
   try {
@@ -36,6 +98,56 @@ router.get("/tasks", checkBlacklist, fetchUserId, async (req, res) => {
   }
 });
 
+
+/**
+ * @swagger
+ * /createTask:
+ *   post:
+ *     summary: Create a new task.
+ *     tags: [Task]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Company finance app"
+ *               description:
+ *                 type: string
+ *                 example: "Bugs in the fiance application"
+ *               tag:
+ *                 type: string
+ *                 example: "Bugs "
+ *     responses:
+ *       201:
+ *         description: Task created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "60e6a5by564tr80011256e7c"
+ *                 title:
+ *                   type: string
+ *                   example: "Company finance app"
+ *                 description:
+ *                   type: string
+ *                   example: "Bugs in the fiance application"
+ *                 tag:
+ *                   type: string
+ *                   example: "Bugs"
+ *       400:
+ *         description: Invalid input or missing required fields.
+ *       401:
+ *         description: Unauthorized or insufficient permissions.
+ *       500:
+ *         description: Internal server error.
+ */
 // create tasks.
 router.post("/createTask", checkBlacklist, fetchUserId, async (req, res) => {
   try {
@@ -85,6 +197,48 @@ router.post("/createTask", checkBlacklist, fetchUserId, async (req, res) => {
   }
 });
 
+
+/**
+ * @swagger
+ * /deleteTask/{id}:
+ *   delete:
+ *     summary: Delete a task by ID.
+ *     tags: [Task]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the task to be deleted.
+ *         schema:
+ *           type: string
+ *           example: "60e6a5by564tr80011256e7c"
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: string
+ *                   example: "Task has been deleted"
+ *                 foundTask:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "60e6a5by564tr80011256e7c"
+ *                     title:
+ *                       type: string
+ *                       example: "Company finance app"
+ *       401:
+ *         description: Unauthorized or insufficient permissions.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal server error.
+ */
 // delete task
 router.delete("/deleteTask/:id", checkBlacklist, fetchUserId, async (req, res) => {
   try {

@@ -7,6 +7,137 @@ const { checkBlacklist } = require("../middleware/tokenBlockList");
 const { adminLimiter } = require("../middleware/loginLimiter")
 require("dotenv").config();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: "605c72ef153207001f14a201"
+ *         email:
+ *           type: string
+ *           example: "admin@company.com"
+ *         name:
+ *           type: string
+ *           example: "John Doe"
+ *         role:
+ *           type: string
+ *           example: "admin"
+ *         employee_id:
+ *           type: number
+ *           example: 12345
+ *         manager_id:
+ *           type: number
+ *           example: 10001
+ *     Task:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: "60e6a5b5d9c1f80011256e7c"
+ *         title:
+ *           type: string
+ *           example: "Finish quarterly report"
+ *         description:
+ *           type: string
+ *           example: "Complete the quarterly report for Q3 and share it with the team."
+ *         tag:
+ *           type: string
+ *           example: "Report"
+ *         status:
+ *           type: string
+ *           example: "In Progress"
+ *         dueDate:
+ *           type: string
+ *           format: date-time
+ *           example: "2024-12-15T23:59:59Z"
+ *         manager_id:
+ *           type: number
+ *           example: 10001
+ *         assigned_to_id:
+ *           type: number
+ *           example: 54321
+ *         assigned_to_username:
+ *           type: string
+ *           example: "Jane Smith"
+ */
+
+
+/**
+ * @swagger
+ * /api/admin:
+ *   get:
+ *     summary: Get all tasks and users
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              auth_token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ..."
+ *     responses:
+ *       200:
+ *         description: The list of tasks and users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 fetchingTask:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Task'
+ *                   example:
+ *                     - _id: "60e6a5b5d9c1f80011256e7c"
+ *                       title: "Finish quarterly report"
+ *                       description: "Complete the quarterly report for Q3 and share it with the team."
+ *                       tag: "Report"
+ *                     - _id: "60e6a5by564tr80011256e7c"
+ *                       title: "Excel sheet need to complete"
+ *                       description: "collaberate with the manager to complete it."
+ *                       tag: "Excel"
+ *                 allUsers:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *                   example:
+ *                     - _id: "605c72ef153207001f14a201"
+ *                       email: "admin@company.com"
+ *                       name: "John Doe"
+ *                       role: "admin"
+ *                       employee_id: 12345
+ *                     - _id: "605c72ef153207001f14a202"
+ *                       email: "manager@company.com"
+ *                       name: "Sarah Smith"
+ *                       role: "manager"
+ *                       employee_id: 10001
+ *                       manager_id: 12345
+ *                     - _id: "605c72ef153207001f14a203"
+ *                       email: "employee@company.com"
+ *                       name: "Jane Smith"
+ *                       role: "employee"
+ *                       employee_id: 54321
+ *                     - _id: "605c72ef155t401f14a203"
+ *                       email: "henry@company.com"
+ *                       name: "henry Smith"
+ *                       employee_id: 1789
+ *       401:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Admin not found
+ *       500:
+ *         description: Internal server error
+ */
+
 // admin route to get all tasks and users on the platform.
 router.get("/admin", adminLimiter, checkBlacklist, fetchUserId, async (req, res) => {
 
@@ -33,6 +164,67 @@ router.get("/admin", adminLimiter, checkBlacklist, fetchUserId, async (req, res)
         res.status(500).send("Internal server error");
     }
 });
+
+/**
+ * @swagger
+ * /api/admin/adminAssignManager:
+ *   put:
+ *     summary: Assign manager to employee
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []  # This indicates that the token should be passed in the Authorization header
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               employee_id:
+ *                 type: number
+ *                 example: 54321
+ *               manager_id:
+ *                 type: number
+ *                 example: 10001
+ *     responses:
+ *       200:
+ *         description: Manager updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "Manager updated successfully"
+ *                 employee:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "605c72ef153207001f14a201"
+ *                     email:
+ *                       type: string
+ *                       example: "employee@company.com"
+ *                     name:
+ *                       type: string
+ *                       example: "Jane Smith"
+ *                     role:
+ *                       type: string
+ *                       example: "employee"
+ *                     employee_id:
+ *                       type: number
+ *                       example: 54321
+ *                     manager_id:
+ *                       type: number
+ *                       example: 10001
+ *       401:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Admin, employee, or manager not found
+ *       500:
+ *         description: Internal server error
+ */
 
 // admin route to assign manager to the employee. 
 router.put("/adminAssignManager", adminLimiter, checkBlacklist, fetchUserId, async (req, res) => {
@@ -82,6 +274,57 @@ router.put("/adminAssignManager", adminLimiter, checkBlacklist, fetchUserId, asy
     }
 });
 
+
+/**
+ * @swagger
+ * /api/AdminAssignTask/{taskId}:
+ *   put:
+ *     summary: Assign task to employee
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The task ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               employeeId:
+ *                 type: number
+ *                 example: 54321
+ *     responses:
+ *       200:
+ *         description: Task assigned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *               example:
+ *                 _id: "60e6a5b5d9c1f80011256e7c"
+ *                 title: "Finish quarterly report"
+ *                 description: "Complete the quarterly report for Q3 and share it with the team."
+ *                 tag: "Report"
+ *                 status: "In Progress"
+ *                 dueDate: "2024-12-15T23:59:59Z"
+ *                 manager_id: 10001
+ *                 assigned_to_id: 54321
+ *                 assigned_to_username: "Jane Smith"
+ *       401:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Admin, employee, or task not found
+ *       500:
+ *         description: Internal server error
+ */
+
 // admin route to assign tasks to the employees.
 router.put("/AdminAssignTask/:taskId", adminLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
@@ -118,6 +361,65 @@ router.put("/AdminAssignTask/:taskId", adminLimiter, checkBlacklist, fetchUserId
     }
 });
 
+
+/**
+ * @swagger
+ * /api/adminUpdateTask/{id}:
+ *   put:
+ *     summary: Update existing task
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The task ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Updated Task Title"
+ *               description:
+ *                 type: string
+ *                 example: "Updated task description"
+ *               status:
+ *                 type: string
+ *                 example: "Completed"
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-20T23:59:59Z"
+ *     responses:
+ *       200:
+ *         description: Task updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               example:
+ *                 _id: "60e6a5b5d9c1f80011256e7c"
+ *                 title: "Updated Task Title"
+ *                 description: "Updated task description"
+ *                 tag: "Report"
+ *                 status: "Completed"
+ *                 dueDate: "2024-12-20T23:59:59Z"
+ *                 manager_id: 10001
+ *                 assigned_to_id: 54321
+ *                 assigned_to_username: "Jane Smith"
+ *       401:
+ *         description: Unauthorized access
+ *       404:
+ *         description: Admin or task not found
+ *       500:
+ *         description: Internal server error
+ */
 // admin route to update the existing tasks.
 router.put("/adminUpdateTask/:id", adminLimiter, checkBlacklist, fetchUserId, async (req, res) => {
     try {
