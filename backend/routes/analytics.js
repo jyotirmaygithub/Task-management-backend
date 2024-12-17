@@ -38,6 +38,8 @@ async function fetchUser(req, res, next) {
  *     description: Fetch the task statistics for an employee (completed, pending, and overdue tasks).
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Task statistics for employee
@@ -90,6 +92,8 @@ router.get("/employee", analyticsLimiter, checkBlacklist, fetchUserId, fetchUser
  *     description: Fetch the task statistics for a manager (completed, pending, and overdue tasks).
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Task statistics for manager
@@ -148,6 +152,8 @@ router.get("/manager", analyticsLimiter, checkBlacklist, fetchUserId, fetchUser,
  *     description: Fetch the completed tasks for an employee.
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of completed tasks
@@ -208,6 +214,8 @@ router.get("/employee/completed-tasks", analyticsLimiter, checkBlacklist, fetchU
  *     description: Fetch the pending tasks for an employee.
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of pending tasks
@@ -245,6 +253,8 @@ router.get("/employee/pending-tasks", analyticsLimiter, checkBlacklist, fetchUse
  *     description: Fetch the overdue tasks for an employee.
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of overdue tasks
@@ -284,6 +294,8 @@ router.get("/employee/overdue-tasks", analyticsLimiter, checkBlacklist, fetchUse
  *     description: Fetch the completed tasks for a manager.
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of completed tasks
@@ -348,6 +360,8 @@ router.get("/manager/completed-tasks", analyticsLimiter, checkBlacklist, fetchUs
  *     description: Fetch the pending tasks for a manager.
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of pending tasks
@@ -389,6 +403,8 @@ router.get("/manager/pending-tasks", analyticsLimiter, checkBlacklist, fetchUser
  *     description: Fetch the overdue tasks for a manager.
  *     tags:
  *       - Analysis
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of overdue tasks

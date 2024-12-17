@@ -11,6 +11,8 @@ const fetchUserId = require("../middleware/fetchUserId");
  *   post:
  *     summary: Search tasks by title, description, status, tag, or assigned username.
  *     tags: [Searching]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
