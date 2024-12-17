@@ -8,6 +8,16 @@ This RESTful API, built with Node.js, offers a robust task management solution f
 
 - **Backend**: Node.js, Express.js, MongoDB
 
+## Swagger ui deployed link:
+ ```bash
+  https://task-management-backend-m4qj.onrender.com/api-docs
+```
+
+## Render deployed link:
+ ```bash
+  https://task-management-backend-m4qj.onrender.com
+```
+
 ### Dependencies
 
 - **bcrypt**: ^5.1.1
@@ -112,10 +122,6 @@ Here's an outline of the routes typically used in the Task Management System:
 
 -- **POST /searching/search-tasks**: Fetches data by searching.
 
-## Render deployed link:
- ```bash
-  https://task-management-backend-m4qj.onrender.com
-```
 ## Installation
 
 Follow these steps to set up and run the application locally:
