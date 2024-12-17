@@ -17,10 +17,12 @@ require("dotenv").config();
 
 /**
  * @swagger
- * /manager:
+ * /api/manager/manager:
  *   get:
  *     summary: Get tasks and employees specific to the manager.
  *     tags: [Manager]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of employees and tasks under the manager.
@@ -122,10 +124,12 @@ router.get("/manager", managerLimiter, checkBlacklist, fetchUserId, async (req, 
 
 /**
  * @swagger
- * /updateEmployee/{employeeId}:
+ * /api/manager/updateEmployee/{employeeId}:
  *   put:
  *     summary: Manager to update or change employee role.
  *     tags: [Manager]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: employeeId
  *         in: path
@@ -220,10 +224,12 @@ router.put("/updateEmployee/:employeeId", managerLimiter, checkBlacklist, fetchU
 
 /**
  * @swagger
- * /managerUpdateTask/{id}:
+ * /api/manager/managerUpdateTask/{id}:
  *   put:
  *     summary: Manager to update the task.
  *     tags: [Manager]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -354,10 +360,12 @@ router.put("/managerUpdateTask/:id", managerLimiter, checkBlacklist, fetchUserId
 
 /**
  * @swagger
- * /assignTask/{taskId}:
+ * /api/manager/assignTask/{taskId}:
  *   put:
  *     summary: Manager to assign task to an employee.
  *     tags: [Manager]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: taskId
  *         in: path

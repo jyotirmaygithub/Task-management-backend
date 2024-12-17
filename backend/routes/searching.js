@@ -7,10 +7,10 @@ const fetchUserId = require("../middleware/fetchUserId");
 
 /**
  * @swagger
- * /search-tasks:
+ * /api/searching/search-tasks:
  *   post:
  *     summary: Search tasks by title, description, status, tag, or assigned username.
- *     tags: [Task]
+ *     tags: [Searching]
  *     requestBody:
  *       required: true
  *       content:

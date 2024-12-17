@@ -8,7 +8,7 @@ const { checkBlacklist } = require("../middleware/tokenBlockList");
 
 /**
  * @swagger
- * /tasks:
+ * /api/task/tasks:
  *   get:
  *     summary: Get tasks based on filters (status, sortBy, order).
  *     tags: [Task]
@@ -101,10 +101,12 @@ router.get("/tasks", checkBlacklist, fetchUserId, async (req, res) => {
 
 /**
  * @swagger
- * /createTask:
+ * /api/task/createTask:
  *   post:
  *     summary: Create a new task.
  *     tags: [Task]
+ *     security:
+ *       - bearerAuth: [] 
  *     requestBody:
  *       required: true
  *       content:
@@ -200,7 +202,7 @@ router.post("/createTask", checkBlacklist, fetchUserId, async (req, res) => {
 
 /**
  * @swagger
- * /deleteTask/{id}:
+ * /api/task/deleteTask/{id}:
  *   delete:
  *     summary: Delete a task by ID.
  *     tags: [Task]

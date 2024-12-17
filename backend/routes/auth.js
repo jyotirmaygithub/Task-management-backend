@@ -34,8 +34,6 @@ const isStrongPassword = (password) => {
  *     description: Create a new user account.
  *     tags:
  *       - Auth
- *     security:
- *       - BearerAuth: []  # Specify the security requirement (authentication)
  *     requestBody:
  *       required: true
  *       content:
@@ -51,25 +49,22 @@ const isStrongPassword = (password) => {
  *             properties:
  *               name:
  *                 type: string
- *                 example: John Doe
+ *                 example: henry gupta
  *               email:
  *                 type: string
- *                 example: johndoe@example.com
+ *                 example: henrygupta@example.com
  *               password:
  *                 type: string
  *                 example: Password123!
  *               employee_id:
  *                 type: integer
- *                 example: 12345
- *               manager_id:
- *                 type: integer
- *                 example: 54321
+ *                 example: 1947
  *               role:
  *                 type: string
  *                 example: "employee"
  *               aboutSelf:
  *                 type: string
- *                 example: "I am a software developer."
+ *                 example: "Interested software developer."
  *     responses:
  *       200:
  *         description: Successfully created a new user and returned the authentication token.
@@ -188,7 +183,7 @@ router.post("/newuser", authLimiter, async (req, res) => {
  *             properties:
  *               email:
  *                 type: string
- *                 example: johndoe@example.com
+ *                 example: henrygupta@example.com
  *               password:
  *                 type: string
  *                 example: Password123!
@@ -248,7 +243,7 @@ router.post("/login", authLimiter, async (req, res) => {
  *     tags:
  *       - Auth
  *     security:
- *       - BearerAuth: []  # This route requires authentication (Bearer token).
+ *       - bearerAuth: []  # This route requires authentication (Bearer token).
  *     responses:
  *       200:
  *         description: Successfully logged out.

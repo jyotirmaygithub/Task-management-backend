@@ -68,22 +68,12 @@ require("dotenv").config();
 
 /**
  * @swagger
- * /api/admin:
+ * /api/admin/admin:
  *   get:
  *     summary: Get all tasks and users
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              auth_token:
- *                   type: string
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ..."
  *     responses:
  *       200:
  *         description: The list of tasks and users
@@ -138,6 +128,7 @@ require("dotenv").config();
  *         description: Internal server error
  */
 
+
 // admin route to get all tasks and users on the platform.
 router.get("/admin", adminLimiter, checkBlacklist, fetchUserId, async (req, res) => {
 
@@ -182,10 +173,10 @@ router.get("/admin", adminLimiter, checkBlacklist, fetchUserId, async (req, res)
  *             properties:
  *               employee_id:
  *                 type: number
- *                 example: 54321
+ *                 example: 1947
  *               manager_id:
  *                 type: number
- *                 example: 10001
+ *                 example: 1789
  *     responses:
  *       200:
  *         description: Manager updated successfully
@@ -277,7 +268,7 @@ router.put("/adminAssignManager", adminLimiter, checkBlacklist, fetchUserId, asy
 
 /**
  * @swagger
- * /api/AdminAssignTask/{taskId}:
+ * /api/admin/AdminAssignTask/{taskId}:
  *   put:
  *     summary: Assign task to employee
  *     tags: [Admin]
@@ -286,9 +277,9 @@ router.put("/adminAssignManager", adminLimiter, checkBlacklist, fetchUserId, asy
  *     parameters:
  *       - in: path
  *         name: taskId
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
  *         description: The task ID
  *     requestBody:
  *       required: true
@@ -306,7 +297,26 @@ router.put("/adminAssignManager", adminLimiter, checkBlacklist, fetchUserId, asy
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Task'
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 tag:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 dueDate:
+ *                   type: string
+ *                 manager_id:
+ *                   type: number
+ *                 assigned_to_id:
+ *                   type: number
+ *                 assigned_to_username:
+ *                   type: string
  *               example:
  *                 _id: "60e6a5b5d9c1f80011256e7c"
  *                 title: "Finish quarterly report"
@@ -364,7 +374,7 @@ router.put("/AdminAssignTask/:taskId", adminLimiter, checkBlacklist, fetchUserId
 
 /**
  * @swagger
- * /api/adminUpdateTask/{id}:
+ * /api/admin/adminUpdateTask/{id}:
  *   put:
  *     summary: Update existing task
  *     tags: [Admin]

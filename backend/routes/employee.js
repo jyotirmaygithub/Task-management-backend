@@ -18,10 +18,12 @@ require("dotenv").config();
 
 /**
  * @swagger
- * /employee:
+ * /api/employee/employee:
  *   get:
  *     summary: Get employee profile and their assigned tasks.
  *     tags: [Employee]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Employee profile and assigned tasks retrieved successfully.
@@ -107,10 +109,12 @@ router.get("/employee", employeeLimiter, checkBlacklist, fetchUserId, async (req
 
 /**
  * @swagger
- * /employeeUpdateTask/{id}:
+ * /api/employee/employeeUpdateTask/{id}:
  *   put:
  *     summary: Update the status of a task by the assigned employee.
  *     tags: [Employee]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -213,10 +217,12 @@ router.put("/employeeUpdateTask/:id", employeeLimiter, checkBlacklist, fetchUser
 
 /**
  * @swagger
- * /employeeUpdate:
+ * /api/employee/employeeUpdate:
  *   put:
  *     summary: Update employee profile with restricted fields.
  *     tags: [Employee]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -227,7 +233,7 @@ router.put("/employeeUpdateTask/:id", employeeLimiter, checkBlacklist, fetchUser
  *               name:
  *                 type: string
  *                 example: "Henry Gupta"
- *               aboutself:
+ *               aboutSelf:
  *                 type: string
  *                 example: "I am a dedicated employee with a passion for data analysis."
  *     responses:
