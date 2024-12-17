@@ -29,14 +29,45 @@ const swaggerDefinition = {
   ],
   components: {
     securitySchemes: {
-      BearerAuth: {
+      bearerAuth: {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
       },
     },
   },
+  tags: [
+    {
+      name: 'Auth',
+      description: 'Authentication endpoints',
+    },
+    {
+      name: 'Admin',
+      description: 'Admin endpoints',
+    },
+    {
+      name: 'Manager',
+      description: 'Manager endpoints',
+    },
+    {
+      name: 'Employee',
+      description: 'Employee endpoints',
+    },
+    {
+      name: 'Task',
+      description: 'Task management endpoints',
+    },
+    {
+      name: 'Analysis',
+      description: 'Analytics endpoints',
+    },
+    {
+      name: 'Searching',
+      description: 'Searching endpoints',
+    },
+  ],
 };
+
 
 // Options for swagger-jsdoc
 const options = {
