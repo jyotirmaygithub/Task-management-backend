@@ -183,7 +183,7 @@ router.post("/newuser", authLimiter, async (req, res) => {
  *             properties:
  *               email:
  *                 type: string
- *                 example: henrygupta@example.com
+ *                 example: jyotirmayhistory189@gmail.com
  *               password:
  *                 type: string
  *                 example: Password123!

@@ -290,7 +290,7 @@ router.put("/adminAssignManager", adminLimiter, checkBlacklist, fetchUserId, asy
  *             properties:
  *               employeeId:
  *                 type: number
- *                 example: 54321
+ *                 example: 1947
  *     responses:
  *       200:
  *         description: Task assigned successfully

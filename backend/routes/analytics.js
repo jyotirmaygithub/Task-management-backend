@@ -32,7 +32,7 @@ async function fetchUser(req, res, next) {
 
 /**
  * @swagger
- * /analytics/employee:
+ * /api/analytics/employee:
  *   get:
  *     summary: Get task statistics by employee
  *     description: Fetch the task statistics for an employee (completed, pending, and overdue tasks).
@@ -86,7 +86,7 @@ router.get("/employee", analyticsLimiter, checkBlacklist, fetchUserId, fetchUser
 
 /**
  * @swagger
- * /analytics/manager:
+ * /api/analytics/manager:
  *   get:
  *     summary: Get task statistics by manager
  *     description: Fetch the task statistics for a manager (completed, pending, and overdue tasks).
@@ -146,7 +146,7 @@ router.get("/manager", analyticsLimiter, checkBlacklist, fetchUserId, fetchUser,
 
 /**
  * @swagger
- * /analytics/employee/completed-tasks:
+ * /api/analytics/employee/completed-tasks:
  *   get:
  *     summary: Get completed tasks for employee
  *     description: Fetch the completed tasks for an employee.
@@ -208,7 +208,7 @@ router.get("/employee/completed-tasks", analyticsLimiter, checkBlacklist, fetchU
 
 /**
  * @swagger
- * /analytics/employee/pending-tasks:
+ * /api/analytics/employee/pending-tasks:
  *   get:
  *     summary: Get pending tasks for employee
  *     description: Fetch the pending tasks for an employee.
@@ -247,7 +247,7 @@ router.get("/employee/pending-tasks", analyticsLimiter, checkBlacklist, fetchUse
 
 /**
  * @swagger
- * /analytics/employee/overdue-tasks:
+ * /api/analytics/employee/overdue-tasks:
  *   get:
  *     summary: Get overdue tasks for employee
  *     description: Fetch the overdue tasks for an employee.
@@ -288,7 +288,7 @@ router.get("/employee/overdue-tasks", analyticsLimiter, checkBlacklist, fetchUse
 
 /**
  * @swagger
- * /analytics/manager/completed-tasks:
+ * /api/analytics/manager/completed-tasks:
  *   get:
  *     summary: Get completed tasks for manager
  *     description: Fetch the completed tasks for a manager.
@@ -354,7 +354,7 @@ router.get("/manager/completed-tasks", analyticsLimiter, checkBlacklist, fetchUs
 
 /**
  * @swagger
- * /analytics/manager/pending-tasks:
+ * /api/analytics/manager/pending-tasks:
  *   get:
  *     summary: Get pending tasks for manager
  *     description: Fetch the pending tasks for a manager.
@@ -397,7 +397,7 @@ router.get("/manager/pending-tasks", analyticsLimiter, checkBlacklist, fetchUser
 
 /**
  * @swagger
- * /analytics/manager/overdue-tasks:
+ * /api/analytics/manager/overdue-tasks:
  *   get:
  *     summary: Get overdue tasks for manager
  *     description: Fetch the overdue tasks for a manager.

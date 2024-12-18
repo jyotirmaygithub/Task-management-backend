@@ -382,7 +382,7 @@ router.put("/managerUpdateTask/:id", managerLimiter, checkBlacklist, fetchUserId
  *             properties:
  *               employee_id:
  *                 type: number
- *                 example: 1789
+ *                 example: 1947
  *     responses:
  *       200:
  *         description: Task assigned successfully
